@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=4 uid="uid://c8ubvb2a4p1yc"]
 
-[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_0tnpc"]
+[ext_resource type="Script" uid="uid://b2swnk6vqcsss" path="res://scripts/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="PackedScene" uid="uid://krfmoauu2bnw" path="res://scenes/player.tscn" id="1_uwrxv"]
 [ext_resource type="Texture2D" uid="uid://bgv0dhkk6n6q3" path="res://assets/brackeys_platformer_assets/sprites/world_tileset.png" id="2_yqjtg"]
 [ext_resource type="PackedScene" uid="uid://b3vx2c5tnp1th" path="res://scenes/killzone.tscn" id="4_iywne"]
@@ -244,6 +244,9 @@ vertical_alignment = 2
 unique_name_in_owner = true
 
 [node name="Grapple Point" parent="Grapple Points" instance=ExtResource("7_wobke")]
+
+[node name="Grapple Point2" parent="Grapple Points" instance=ExtResource("7_wobke")]
+position = Vector2(428, 12)
 
 [node name="GrappleIcon" type="Button" parent="."]
 z_index = 1
