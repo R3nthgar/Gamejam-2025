@@ -11,6 +11,8 @@ extends CharacterBody2D
 @onready var grapple_icon: Button = $"../GrappleIcon"
 @onready var slime: Node2D = $"../Slime"
 @onready var timer: Timer = $Timer
+@onready var death: Label = $"../CanvasLayer/Death"
+@onready var death_timer: Timer = $DeathTimer
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
@@ -33,16 +35,6 @@ func jump():
 	velocity.y += JUMP_VELOCITY
 func _ready() -> void:
 	truecenter=player
-func die():
-	dead = true
-	if is_on_floor():
-		play_anim("death1")
-	else:
-		play_anim("death2")
-	swinging = false
-	player.rotation = 0
-	ray_cast_2d.rotation=0
-	line_2d.points = PackedVector2Array([])
 func gravity(center: Vector2, delta):
 	velocity += Vector2(get_gravity().y * cos(center.angle_to_point(position)), 0).rotated(center.angle_to_point(position) + PI/2) * delta
 func is_touching():
@@ -211,4 +203,21 @@ func _on_timer_timeout() -> void:
 		hurting=false
 		play_anim("default")
 	else:
-		slime.queue_free()
+		animated_sprite_2d.position.y=0
+		die()
+func die():
+	dead = true
+	if is_on_floor():
+		play_anim("death1")
+	else:
+		play_anim("death2")
+	swinging = false
+	player.rotation = 0
+	ray_cast_2d.rotation=0
+	line_2d.points = PackedVector2Array([])
+	Engine.time_scale=0.5
+	death_timer.start()
+	death.text="You Died"
+func _on_death_timeout() -> void:
+	get_tree().reload_current_scene()
+	Engine.time_scale=1
