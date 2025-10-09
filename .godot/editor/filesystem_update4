@@ -1,7 +1,0 @@
-res://scenes/hurtbox.tscn
-res://scripts/hurtbox.gd
-res://scenes/player.tscn
-res://scripts/player.gd
-res://scenes/game.tscn
-res://scenes/killzone.tscn
-res://scripts/killzone.gd
