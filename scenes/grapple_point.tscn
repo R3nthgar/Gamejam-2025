@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://ylahwup7tdb4"]
+
+[ext_resource type="Texture2D" uid="uid://bgv0dhkk6n6q3" path="res://assets/brackeys_platformer_assets/sprites/world_tileset.png" id="1_gaaoi"]
+
+[node name="Grapple Point" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("1_gaaoi")
+region_enabled = true
+region_rect = Rect2(64, 128, 16, 16)
