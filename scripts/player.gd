@@ -10,8 +10,6 @@ extends CharacterBody2D
 @onready var grapple_points: Node = %"Grapple Points"
 @onready var grapple_icon: Button = $"../GrappleIcon"
 @onready var slime: Node2D = $"../Slime"
-@onready var punch_zone: Area2D = $PunchZone
-@onready var whip_zone: Area2D = $WhipZone
 @onready var timer: Timer = $Timer
 
 const SPEED = 130.0
@@ -32,8 +30,6 @@ func play_anim(anim):
 		animated_sprite_2d.play(anim)
 func jump():
 	play_anim("jump")
-	if (label.text == "Press Space to Jump"):
-		label.text = "Press Q to Grapple"
 	velocity.y += JUMP_VELOCITY
 func _ready() -> void:
 	truecenter=player
@@ -56,21 +52,11 @@ func _physics_process(delta: float) -> void :
 		grapple_icon.position=near_grapple(player.position).position
 		if Input.is_action_just_pressed("Grapple"):
 			start_grapple(position)
-		if Input.is_action_just_pressed("Punch"):
-			var punched=punch_zone.get_overlapping_bodies()
-			for punchee in punched:
-				punchee.get_parent().hurt()
-		if Input.is_action_just_pressed("Whip"):
-			var whipped=whip_zone.get_overlapping_bodies()
-			for whipee in whipped:
-				whipee.get_parent().hurt()
 		var center = truecenter.position
 		if not swinging:
 			var direction: = Input.get_axis("Left", "Right")
 			if ( not dead and not launched) or is_on_floor():
 				if direction:
-					if (label.text == "Move Left and Right with A and D"):
-						label.text = "Press Space to Jump"
 					if is_on_floor() or (((direction>0) == (velocity.x>0)) and abs(velocity.x) == SPEED):
 						velocity.x = direction * SPEED
 					else:
@@ -92,10 +78,6 @@ func _physics_process(delta: float) -> void :
 				if ( not dead and not launched):
 					play_anim("jump")
 			move_and_slide()
-			if(animated_sprite_2d.flip_h):
-				punch_zone.rotation=PI
-			else:
-				punch_zone.rotation=0
 		else:
 			if Input.is_action_just_pressed("Jump"):
 				swinging = false
@@ -103,7 +85,6 @@ func _physics_process(delta: float) -> void :
 				ray_cast_2d.rotation=0
 				animated_sprite_2d.flip_h = (velocity.x < 0)
 				line_2d.points = PackedVector2Array([])
-				label.text = ""
 				play_anim("roll")
 				launched = true
 				move_and_slide()
@@ -112,8 +93,6 @@ func _physics_process(delta: float) -> void :
 				if (not is_on_floor()):
 					velocity -= Vector2((pow(velocity.length() * delta, 2)) / position.distance_to(center), 0).rotated(center.angle_to_point(position)) / delta
 					if direction and swingingmovement:
-						if (label.text == "Swing with A and D" and not movingnotswinging):
-							label.text = "Climb with W and S"
 						velocity += Vector2(SPEED * delta * 0.5, 0).rotated(center.angle_to_point(position)-PI/2*direction)
 					else:
 						movingnotswinging = false
@@ -128,8 +107,6 @@ func _physics_process(delta: float) -> void :
 						play_anim("idle")
 				var directionv: = Input.get_axis("Down", "Up")
 				if directionv and swingingmovement:
-					if (label.text == "Climb with W and S"):
-						label.text = "Press Space to Stop Grappling"
 					if ( not (directionv == 1 and position.distance_to(center) <= 10) and not (directionv == 1 and ray_cast_2d.is_colliding())):
 						var lastPos = position
 						if (is_on_floor()):
@@ -138,8 +115,6 @@ func _physics_process(delta: float) -> void :
 								player.rotation = 0
 								ray_cast_2d.rotation=0
 								line_2d.points = PackedVector2Array([])
-								if (label.text != ""):
-									label.text = "Press Q to Grapple"
 							else:
 								position.y -= 100 * delta
 						else:
@@ -171,10 +146,6 @@ func _physics_process(delta: float) -> void :
 					gravity(center,delta / 2)
 				if (swinging):
 					line_2d.points = PackedVector2Array([position, center])
-				if(animated_sprite_2d.flip_h):
-					punch_zone.rotation=PI
-				else:
-					punch_zone.rotation=0
 	else:
 		if ( not is_on_floor()):
 			velocity += get_gravity() * delta
@@ -189,8 +160,6 @@ func _on_area_2d_body_entered(body: Node2D) -> void :
 			player.rotation = 0
 			ray_cast_2d.rotation=0
 			line_2d.points = PackedVector2Array([])
-			if (label.text != ""):
-				label.text = "Press Q to Grapple"
 	touching = true
 	launched = false
 
@@ -198,11 +167,6 @@ func _on_area_2d_body_exited(body: Node2D) -> void:
 	var center = truecenter.position
 	touching = false
 	if (swinging):
-			if (label.text == "Jump off a ledge"):
-				if(swingingmovement):
-					label.text = "Swing with A and D"
-				else:
-					label.text="Press Space to Stop Grappling"
 			play_anim("jump")
 			var angle = center.angle_to_point(position) + PI / 2
 			velocity.x = velocity.x * cos(angle)
@@ -223,14 +187,6 @@ func start_grapple(search_point):
 	jumping = false
 	swinging = true
 	play_anim("jump")
-	if (label.text != ""):
-		if ( not is_on_floor()):
-			if(swingingmovement):
-				label.text = "Swing with A and D"
-			else:
-				label.text="Press Space to Stop Grappling"
-		else:
-			label.text = "Jump off a ledge"
 	truecenter=near_grapple(search_point)
 	var center = truecenter.position
 	length = position.distance_to(center)
@@ -243,6 +199,7 @@ func start_grapple(search_point):
 		velocity = - Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
 func hurt():
 	if(not hurting):
+		print("HI")
 		play_anim("hurt")
 		hurting=true
 		timer.start()
