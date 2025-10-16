@@ -1,5 +1,0 @@
-res://scenes/player.tscn
-res://scripts/player.gd
-res://scenes/game.tscn
-res://scripts/hurtbox.gd
-res://scenes/hurtbox.tscn
