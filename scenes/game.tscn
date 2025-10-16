@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://c8ubvb2a4p1yc"]
+[gd_scene load_steps=13 format=4 uid="uid://c8ubvb2a4p1yc"]
 
 [ext_resource type="Script" uid="uid://b2swnk6vqcsss" path="res://scripts/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="PackedScene" uid="uid://krfmoauu2bnw" path="res://scenes/player.tscn" id="1_uwrxv"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://blobmlqq6cr8h" path="res://scenes/hurtbox.tscn" id="5_arpf6"]
 [ext_resource type="FontFile" uid="uid://dm6d4x56a0sv3" path="res://assets/brackeys_platformer_assets/fonts/PixelOperator8-Bold.ttf" id="6_7nr52"]
 [ext_resource type="PackedScene" uid="uid://ylahwup7tdb4" path="res://scenes/grapple_point.tscn" id="7_wobke"]
+[ext_resource type="PackedScene" uid="uid://dkrut8du02fcw" path="res://victory_zone.tscn" id="8_gee14"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lnu2h"]
 texture = ExtResource("2_yqjtg")
@@ -182,7 +183,7 @@ size = Vector2(160, 17)
 
 [node name="Player" parent="." instance=ExtResource("1_uwrxv")]
 z_index = 5
-position = Vector2(236, 170)
+position = Vector2(241, 166)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(0, -6)
@@ -244,7 +245,7 @@ unique_name_in_owner = true
 position = Vector2(235, 44)
 
 [node name="Grapple Point2" parent="Grapple Points" instance=ExtResource("7_wobke")]
-position = Vector2(435, 12)
+position = Vector2(436, 112)
 
 [node name="GrappleIcon" type="Button" parent="."]
 z_index = 1
@@ -267,3 +268,7 @@ shape = SubResource("RectangleShape2D_u5sy4")
 [node name="Offscreen" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(427, 1092)
+
+[node name="VictoryZone" parent="." instance=ExtResource("8_gee14")]
+unique_name_in_owner = true
+position = Vector2(697, 43)

@@ -17,6 +17,8 @@ extends CharacterBody2D
 @onready var forwards: RayCast2D = $Forwards
 @onready var backwards: RayCast2D = $Backwards
 
+const maxspeed = 200.0
+@onready var victory_zone: Area2D = %VictoryZone
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 100
@@ -121,6 +123,26 @@ func _physics_process(delta: float) -> void:
 						velocity.x = move_toward(velocity.x, 0,SPEED*delta*5)
 					else:
 						velocity.y = move_toward(velocity.y, 0,SPEED*delta*5)
+			if ( not dead) or is_on_floor():
+				if direction and abs(velocity.x) < maxspeed:
+					if is_on_floor() or (((direction>0) == (velocity.x>0)) and abs(velocity.x) == SPEED):
+						velocity.x += direction * SPEED
+					else:
+						velocity.x += direction * SPEED * 0.5
+					animated_sprite_2d.flip_h = direction == -1
+					if launched == false:
+						play_anim("run")
+				else:
+					if launched == false:
+						play_anim("idle")
+					velocity.x = move_toward(velocity.x, 0, SPEED)
+			if Input.is_action_just_pressed("Jump"):
+				jumping=true
+			elif Input.is_action_just_released("Jump"):
+				jumping=false
+			if is_on_floor():
+				if jumping:
+					jump()
 			else:
 				if(direction):
 					velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*5)
@@ -139,6 +161,7 @@ func _physics_process(delta: float) -> void:
 				swinging = false
 				player.rotation = 0
 				ray_cast_2d.rotation=0
+				velocity.y += JUMP_VELOCITY
 				animated_sprite_2d.flip_h = (velocity.x < 0)
 				line_2d.points = PackedVector2Array([])
 				play_anim("roll")
@@ -280,3 +303,5 @@ func die():
 func _on_death_timeout() -> void:
 	get_tree().reload_current_scene()
 	Engine.time_scale=1
+func triumph():
+	print("Victory...has been obtained.")
