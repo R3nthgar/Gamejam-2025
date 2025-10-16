@@ -13,9 +13,11 @@ extends CharacterBody2D
 @onready var timer: Timer = $Timer
 @onready var death: Label = $"../CanvasLayer/Death"
 @onready var death_timer: Timer = $DeathTimer
+@onready var offscreen: Node2D = %Offscreen
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
+var stringlength = 100
 var health = 3
 var hurting=false
 var swinging = false
@@ -25,7 +27,7 @@ var launched = false
 var touching = false
 var movingnotswinging = false
 var length = 0
-var swingingmovement = false
+var swingingmovement = true
 var jumping = false
 func play_anim(anim):
 	if(not hurting):
@@ -99,7 +101,7 @@ func _physics_process(delta: float) -> void :
 						play_anim("idle")
 				var directionv: = Input.get_axis("Down", "Up")
 				if directionv and swingingmovement:
-					if ( not (directionv == 1 and position.distance_to(center) <= 10) and not (directionv == 1 and ray_cast_2d.is_colliding())):
+					if ( not (directionv == 1 and position.distance_to(center) <= 10 + delta*30) and not (directionv == 1 and ray_cast_2d.is_colliding()) and not ((directionv == -1 and position.distance_to(center) > stringlength + 30 * delta - 1))):
 						var lastPos = position
 						if (is_on_floor()):
 							if (directionv == -1):
@@ -169,42 +171,39 @@ func _on_area_2d_body_exited(body: Node2D) -> void:
 				velocity = - Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
 
 func near_grapple(search_point):
-	var grapple_points_arr=grapple_points.get_children()
+	var grapple_points_arr=grapple_points.get_children().filter(func(a): return position.distance_squared_to(a.position)<=stringlength * stringlength)	
 	if(grapple_points_arr.size()==0):
-		return search_point
+		return offscreen
 	grapple_points_arr.sort_custom(func(a,b): return search_point.distance_squared_to(a.position) < search_point.distance_squared_to(b.position))
 	return grapple_points_arr[0]
 
 func start_grapple(search_point):
-	jumping = false
-	swinging = true
-	play_anim("jump")
 	truecenter=near_grapple(search_point)
-	var center = truecenter.position
-	length = position.distance_to(center)
-	var angle = center.angle_to_point(position) + PI / 2
-	velocity.x = velocity.x * cos(angle)
-	velocity.y = velocity.y * sin(angle)
-	if ((abs(velocity.y) < abs(velocity.x) and velocity.x > 0) or (abs(velocity.y) > abs(velocity.x) and velocity.y > 0)):
-		velocity = Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
-	else:
-		velocity = - Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
+	if(truecenter != offscreen):
+		jumping = false
+		swinging = true
+		play_anim("jump")
+		var center = truecenter.position
+		length = position.distance_to(center)
+		var angle = center.angle_to_point(position) + PI / 2
+		velocity.x = velocity.x * cos(angle)
+		velocity.y = velocity.y * sin(angle)
+		if ((abs(velocity.y) < abs(velocity.x) and velocity.x > 0) or (abs(velocity.y) > abs(velocity.x) and velocity.y > 0)):
+			velocity = Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
+		else:
+			velocity = - Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
 func hurt():
 	if(not hurting):
-		print("HI")
-		play_anim("hurt")
-		hurting=true
-		timer.start()
-		animated_sprite_2d.position.y=3
+		health-=1
+		if(health>0):
+			play_anim("hurt")
+			hurting=true
+			timer.start()
+		else:
+			die()
 func _on_timer_timeout() -> void:
-	health-=1
-	if(health>0):
-		animated_sprite_2d.position.y=0
-		hurting=false
-		play_anim("default")
-	else:
-		animated_sprite_2d.position.y=0
-		die()
+	hurting=false
+	play_anim("default")
 func die():
 	dead = true
 	if is_on_floor():
