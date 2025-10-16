@@ -14,7 +14,7 @@ extends CharacterBody2D
 @onready var death: Label = $"../CanvasLayer/Death"
 @onready var death_timer: Timer = $DeathTimer
 @onready var offscreen: Node2D = %Offscreen
-
+const maxspeed = 200.0
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 100
@@ -49,16 +49,18 @@ func _physics_process(delta: float) -> void :
 		var center = truecenter.position
 		if not swinging:
 			var direction: = Input.get_axis("Left", "Right")
-			if ( not dead and not launched) or is_on_floor():
-				if direction:
+			if ( not dead) or is_on_floor():
+				if direction and abs(velocity.x) < maxspeed:
 					if is_on_floor() or (((direction>0) == (velocity.x>0)) and abs(velocity.x) == SPEED):
-						velocity.x = direction * SPEED
+						velocity.x += direction * SPEED
 					else:
-						velocity.x = direction * SPEED * 0.5
+						velocity.x += direction * SPEED * 0.5
 					animated_sprite_2d.flip_h = direction == -1
-					play_anim("run")
+					if launched == false:
+						play_anim("run")
 				else:
-					play_anim("idle")
+					if launched == false:
+						play_anim("idle")
 					velocity.x = move_toward(velocity.x, 0, SPEED)
 			if Input.is_action_just_pressed("Jump"):
 				jumping=true
@@ -77,6 +79,7 @@ func _physics_process(delta: float) -> void :
 				swinging = false
 				player.rotation = 0
 				ray_cast_2d.rotation=0
+				velocity.y += JUMP_VELOCITY
 				animated_sprite_2d.flip_h = (velocity.x < 0)
 				line_2d.points = PackedVector2Array([])
 				play_anim("roll")
