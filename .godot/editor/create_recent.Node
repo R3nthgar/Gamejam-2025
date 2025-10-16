@@ -1,5 +1,6 @@
-Node2D
 CollisionShape2D
+Area2D
+Node2D
 Timer
 Line2D
 Button

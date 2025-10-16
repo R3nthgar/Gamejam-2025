@@ -14,7 +14,9 @@ extends CharacterBody2D
 @onready var death: Label = $"../CanvasLayer/Death"
 @onready var death_timer: Timer = $DeathTimer
 @onready var offscreen: Node2D = %Offscreen
+
 const maxspeed = 200.0
+@onready var victory_zone: Area2D = %VictoryZone
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 100
@@ -223,3 +225,5 @@ func die():
 func _on_death_timeout() -> void:
 	get_tree().reload_current_scene()
 	Engine.time_scale=1
+func triumph():
+	print("Victory...has been obtained.")
