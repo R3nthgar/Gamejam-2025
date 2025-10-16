@@ -14,10 +14,13 @@ extends CharacterBody2D
 @onready var death: Label = $"../CanvasLayer/Death"
 @onready var death_timer: Timer = $DeathTimer
 @onready var offscreen: Node2D = %Offscreen
+@onready var forwards: RayCast2D = $Forwards
+@onready var backwards: RayCast2D = $Backwards
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 100
+var side = 0
 var health = 3
 var hurting=false
 var swinging = false
@@ -29,45 +32,104 @@ var movingnotswinging = false
 var length = 0
 var swingingmovement = true
 var jumping = false
+var inair = false
 func play_anim(anim):
 	if(not hurting):
 		animated_sprite_2d.play(anim)
 func jump():
 	play_anim("jump")
-	velocity.y += JUMP_VELOCITY
+	velocity += Vector2(0,JUMP_VELOCITY).rotated(side*PI/2)
 func _ready() -> void:
 	truecenter=player
 func gravity(center: Vector2, delta):
 	velocity += Vector2(get_gravity().y * cos(center.angle_to_point(position)), 0).rotated(center.angle_to_point(position) + PI/2) * delta
 func is_touching():
 	return is_on_ceiling() or is_on_floor() or is_on_wall()
-func _physics_process(delta: float) -> void :
+func _physics_process(delta: float) -> void:
 	if not (dead):
+		if(not is_touching()):
+			inair=true
+			animated_sprite_2d.rotation=0
+			side=0
+			animated_sprite_2d.flip_v=false
+		if(is_touching() and inair):
+			inair=false
+			if(is_on_ceiling() and not (is_on_floor() or is_on_wall())):
+				animated_sprite_2d.rotation=0
+				side=2
+				animated_sprite_2d.flip_v=true
+			elif (is_on_wall() and not (is_on_ceiling() or is_on_floor())):
+				animated_sprite_2d.rotation=PI/2
+				if(forwards.is_colliding()):
+					animated_sprite_2d.flip_v=true
+					side=3
+				elif(backwards.is_colliding()):
+					animated_sprite_2d.flip_v=false
+					side=1
+			elif (is_on_floor() and not (is_on_ceiling() or is_on_wall())):
+				animated_sprite_2d.rotation=0
+				side=0
+				animated_sprite_2d.flip_v=false
+			forwards.rotation=animated_sprite_2d.rotation
+			backwards.rotation=animated_sprite_2d.rotation
 		grapple_icon.position=near_grapple(player.position).position
 		if Input.is_action_just_pressed("Grapple"):
 			start_grapple(position)
 		var center = truecenter.position
 		if not swinging:
 			var direction: = Input.get_axis("Left", "Right")
-			if ( not dead and not launched) or is_on_floor():
+			if is_touching():
 				if direction:
-					if is_on_floor() or (((direction>0) == (velocity.x>0)) and abs(velocity.x) == SPEED):
-						velocity.x = direction * SPEED
+					if(side%2==0):
+						if(forwards.is_colliding() and direction==1):
+							animated_sprite_2d.rotation=PI/2
+							animated_sprite_2d.flip_v=true
+							side=3
+							forwards.rotation=animated_sprite_2d.rotation
+							backwards.rotation=animated_sprite_2d.rotation
+						elif(backwards.is_colliding() and direction==-1):
+							animated_sprite_2d.rotation=PI/2
+							animated_sprite_2d.flip_v=false
+							forwards.rotation=animated_sprite_2d.rotation
+							backwards.rotation=animated_sprite_2d.rotation
+							side=1
+						else:
+							velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*5)
 					else:
-						velocity.x = direction * SPEED * 0.5
-					animated_sprite_2d.flip_h = direction == -1
+						if(forwards.is_colliding() and direction==1):
+							animated_sprite_2d.rotation=0
+							forwards.rotation=animated_sprite_2d.rotation
+							backwards.rotation=animated_sprite_2d.rotation
+							animated_sprite_2d.flip_v=false
+							side=0
+						elif(backwards.is_colliding() and direction==-1):
+							animated_sprite_2d.rotation=0
+							forwards.rotation=animated_sprite_2d.rotation
+							backwards.rotation=animated_sprite_2d.rotation
+							animated_sprite_2d.flip_v=true
+							side=2
+						else:
+							velocity.y=move_toward(velocity.y, SPEED*direction*(side-2)*-1,SPEED*delta*5)
+					if(side!=3):
+						animated_sprite_2d.flip_h = direction == -1
+					else:
+						animated_sprite_2d.flip_h = direction == 1
 					play_anim("run")
 				else:
 					play_anim("idle")
-					velocity.x = move_toward(velocity.x, 0, SPEED)
-			if Input.is_action_just_pressed("Jump"):
-				jumping=true
-			elif Input.is_action_just_released("Jump"):
-				jumping=false
-			if is_on_floor():
-				if jumping:
-					jump()
+					if(side%2==0):
+						velocity.x = move_toward(velocity.x, 0,SPEED*delta*5)
+					else:
+						velocity.y = move_toward(velocity.y, 0,SPEED*delta*5)
 			else:
+				if(direction):
+					velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*5)
+					animated_sprite_2d.flip_h = direction == -1
+					play_anim("run")
+			if Input.is_action_just_pressed("Jump"):
+				if(is_touching()):
+					jump()
+			elif not is_touching():
 				velocity += get_gravity() * delta
 				if ( not dead and not launched):
 					play_anim("jump")
@@ -148,8 +210,6 @@ func _physics_process(delta: float) -> void :
 		move_and_slide()
 func _on_area_2d_body_entered(body: Node2D) -> void :
 	if swinging:
-		velocity *= 0
-		if (is_on_floor() and not touching):
 			swinging = false
 			player.rotation = 0
 			ray_cast_2d.rotation=0
