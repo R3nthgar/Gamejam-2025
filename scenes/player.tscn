@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://krfmoauu2bnw"]
+[gd_scene load_steps=36 format=3 uid="uid://krfmoauu2bnw"]
 
 [ext_resource type="Script" uid="uid://da6j4ue8crl2u" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://bar17mc4trefd" path="res://assets/brackeys_platformer_assets/sprites/knight.png" id="1_lj8jo"]
@@ -273,11 +273,9 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_t53lx"]
 radius = 8.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_g2els"]
-radius = 9.0
-
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 68
+collision_layer = 23
+collision_mask = 0
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -287,18 +285,6 @@ autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_t53lx")
-
-[node name="Area2D" type="Area2D" parent="."]
-position = Vector2(0, 7)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(0, -7)
-shape = SubResource("CircleShape2D_g2els")
-
-[node name="RayCast2D" type="RayCast2D" parent="."]
-position = Vector2(0, 9)
-target_position = Vector2(0, -18)
-collision_mask = 2
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.8
@@ -310,13 +296,19 @@ one_shot = true
 
 [node name="Forwards" type="RayCast2D" parent="."]
 target_position = Vector2(9, 0)
-collision_mask = 8
+collision_mask = 4
+
+[node name="Upwards" type="RayCast2D" parent="."]
+target_position = Vector2(0, -9)
+collision_mask = 4
+
+[node name="Downwards" type="RayCast2D" parent="."]
+target_position = Vector2(0, 9)
+collision_mask = 4
 
 [node name="Backwards" type="RayCast2D" parent="."]
 target_position = Vector2(-9, 0)
-collision_mask = 8
+collision_mask = 4
 
-[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
-[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="DeathTimer" to="." method="_on_death_timeout"]

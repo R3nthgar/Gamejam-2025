@@ -6,7 +6,7 @@ func _on_body_entered(body: Node2D) -> void:
 func _on_body_exited(body: Node2D) -> void:
 	hurting.remove_at(hurting.find(body))
 	
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	for hurtee in hurting:
 		if(not hurtee.dead):
 			hurtee.hurt()
