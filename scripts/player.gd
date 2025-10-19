@@ -6,7 +6,7 @@ extends CharacterBody2D
 @onready var line_2d: Line2D = $"../Line2D"
 @onready var grapple_points: Node = %"Grapple Points"
 @onready var grapple_icon: Button = $"../GrappleIcon"
-@onready var timer: Timer = $Timer
+@onready var hurttimer: Timer = $HurtTimer
 @onready var death: Label = $"../CanvasLayer/Death"
 @onready var death_timer: Timer = $DeathTimer
 @onready var offscreen: Node2D = %Offscreen
@@ -14,6 +14,11 @@ extends CharacterBody2D
 @onready var backwards: RayCast2D = $Backwards
 @onready var downwards: RayCast2D = $Downwards
 @onready var upwards: RayCast2D = $Upwards
+@onready var forwardsdown: RayCast2D = $Forwardsdown
+@onready var forwardsup: RayCast2D = $Forwardsup
+@onready var backwardsdown: RayCast2D = $Backwardsdown
+@onready var backwardsup: RayCast2D = $Backwardsup
+@onready var health_icons: Node2D = %HealthIcons
 
 const maxspeed = 200.0
 @onready var victory_zone: Area2D = %VictoryZone
@@ -30,15 +35,29 @@ var launched = false
 var length = 0
 var swingingmovement = true
 var jumping = false
+var stopped=false
 var inair = false
-var lastside=-1
+var lastgroundpos = position
+var lastside
 func play_anim(anim):
 	if(not hurting):
 		animated_sprite_2d.play(anim)
+func changeside(newside):
+	animated_sprite_2d.rotation=PI/2*(newside%2)
+	animated_sprite_2d.flip_v=newside-1>0
+	side=newside
 func jump():
-	velocity += Vector2(0,JUMP_VELOCITY).rotated(side*PI/2)
+	if(side==0):
+		velocity.y=JUMP_VELOCITY
+	elif side==2:
+		velocity.y=-JUMP_VELOCITY/5
+	else:
+		velocity.y=JUMP_VELOCITY
+		velocity.x=JUMP_VELOCITY/2*(side-2)
 func _ready() -> void:
 	truecenter=player
+	lastgroundpos=position
+	lastside=side
 func gravity(center: Vector2, delta):
 	velocity += Vector2(get_gravity().y * cos(center.angle_to_point(position)), 0).rotated(center.angle_to_point(position) + PI/2) * delta
 func is_touching():
@@ -47,111 +66,103 @@ func _physics_process(delta: float) -> void:
 	if not (dead):
 		grapple_icon.position=near_grapple(player.position).position
 		if Input.is_action_just_pressed("Grapple"):
-			start_grapple(position)
+			if(swinging):
+				stop_grapple()
+			else:
+				start_grapple(position)
 		var center = truecenter.position
+		var forwardcol=forwards.is_colliding()
+		var backwardcol=backwards.is_colliding()
+		var upwardcol=upwards.is_colliding()
+		var downwardcol=downwards.is_colliding()
 		if not swinging:
-			var forwardcol=forwards.is_colliding()
-			var backwardcol=backwards.is_colliding()
-			var upwardcol=upwards.is_colliding()
-			var downwardcol=downwards.is_colliding()
-			if upwardcol and not (forwardcol or backwardcol or downwardcol):
-				animated_sprite_2d.rotation=0
-				side=2
-				animated_sprite_2d.flip_v=true
-			elif forwardcol and not (upwardcol or backwardcol or downwardcol):
-				animated_sprite_2d.rotation=PI/2
-				animated_sprite_2d.flip_v=true
-				side=3
-			elif backwardcol and not (upwardcol or forwardcol or downwardcol):
-				animated_sprite_2d.rotation=PI/2
-				animated_sprite_2d.flip_v=false
-				side=1
-			elif not (upwardcol or backwardcol or forwardcol):
-				animated_sprite_2d.rotation=0
-				side=0
-				animated_sprite_2d.flip_v=false
+			if inair and (forwardcol or backwardcol or downwardcol or upwardcol):
+				inair=false
+			if side!=2 and upwardcol and not (forwardcol or backwardcol or downwardcol):
+				changeside(2)
+			elif side!=3 and forwardcol and not (upwardcol or backwardcol or downwardcol):
+				changeside(3)
+			elif side!=1 and backwardcol and not (upwardcol or forwardcol or downwardcol):
+				changeside(1)
+			elif side!=0 and downwardcol and not (upwardcol or forwardcol or backwardcol):
+				changeside(0)
+			elif not inair and not is_touching():
+				if(side%2==0):
+					if((backwardsdown if side==0 else backwardsup).is_colliding() or (forwardsdown if side==0 else forwardsup).is_colliding()):
+						position.x=int(position.x/16) * 16 + (-8.1 if position.x<0 else 8.1)
+						position.y+=(8.1 if side==0 else -8.1)
+						changeside(1 if (backwardsdown if side==0 else backwardsup).is_colliding else 3)
+						velocity*=0
+					else:
+						changeside(0)
+						inair=true
+				elif(side%2==1):
+					if((backwardsdown if side==1 else forwardsdown).is_colliding() or (backwardsup if side==1 else forwardsup).is_colliding()):
+						position.y=int(position.y/16) * 16 + (-8.1 if position.y<0 else 8.1)
+						position.x+=(-8.1 if side==1 else 8.1)
+						changeside(0 if (backwardsdown if side==1 else forwardsdown).is_colliding else 2)
+						velocity*=0
+					else:
+						changeside(0)
+						inair=true
 			var direction: = Input.get_axis("Left", "Right")
-			if is_touching():
+			if is_touching() and not stopped:
 				if direction:
 					if(side%2==0):
-						if(forwards.is_colliding() and direction==1 and lastside!=3):
-							animated_sprite_2d.rotation=PI/2
-							animated_sprite_2d.flip_v=true
-							lastside=side
-							side=3
-						elif(backwards.is_colliding() and direction==-1 and lastside!=1):
-							animated_sprite_2d.rotation=PI/2
-							animated_sprite_2d.flip_v=false
-							lastside=side
-							side=1
+						if(forwardcol and direction*(side-1)==-1):
+							changeside(3)
+						elif(backwardcol and direction*(side-1)==1):
+							changeside(1)
 						else:
-							velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*10)
+							velocity.x=move_toward(velocity.x, SPEED*direction*(side-1)*-1,SPEED*delta*20)
 					else:
-						if(downwards.is_colliding() and direction*(side-2)==-1 and lastside!=0):
-							animated_sprite_2d.rotation=0
-							animated_sprite_2d.flip_v=false
-							lastside=side
-							side=0
-						elif(upwards.is_colliding() and direction*(side-2)==1 and lastside!=2):
-							animated_sprite_2d.rotation=0
-							animated_sprite_2d.flip_v=true
-							lastside=side
-							side=2
+						if(downwardcol and direction*(side-2)==-1):
+							changeside(0)
+						elif(upwardcol and direction*(side-2)==1):
+							changeside(2)
 						else:
-							velocity.y=move_toward(velocity.y, SPEED*direction*(side-2)*-1,SPEED*delta*10)
-					if(side!=3):
+							velocity.y=move_toward(velocity.y, SPEED*direction*(side-2)*-1,SPEED*delta*20)
+					if(side!=3 and side!=2):
 						animated_sprite_2d.flip_h = direction == -1
 					else:
 						animated_sprite_2d.flip_h = direction == 1
 					play_anim("run")
 				else:
 					play_anim("idle")
-					lastside=-1
 					if(side%2==0):
-						velocity.x = move_toward(velocity.x, 0,SPEED*delta*5)
+						velocity.x = move_toward(velocity.x, 0,SPEED*delta*20)
 					else:
-						velocity.y = move_toward(velocity.y, 0,SPEED*delta*5)
-			else:
-				velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*5)
+						velocity.y = move_toward(velocity.y, 0,SPEED*delta*20)
+			elif inair and direction and not stopped and (velocity.x>-SPEED if direction==-1 else velocity.x<SPEED):
+				velocity.x=move_toward(velocity.x, SPEED*direction/2,SPEED*delta*5)
 				animated_sprite_2d.flip_h = direction == -1
 			if Input.is_action_just_pressed("Jump"):
 				if(is_touching()):
 					jump()
-			if not is_touching():
+			if inair:
 				velocity += get_gravity() * delta
-				if ( not dead and not launched):
+				if ( not dead and not launched and not is_on_floor()):
 					play_anim("jump")
 			move_and_slide()
 		else:
 			if Input.is_action_just_pressed("Jump"):
-				swinging = false
-				player.rotation = 0
-				velocity.y += JUMP_VELOCITY
-				animated_sprite_2d.flip_h = (velocity.x < 0)
-				line_2d.points = PackedVector2Array([])
+				stop_grapple()
+				velocity.y += JUMP_VELOCITY/2
 				play_anim("roll")
 				launched = true
 				move_and_slide()
-			elif is_touching():
-				swinging = false
-				player.rotation = 0
-				animated_sprite_2d.flip_h = (velocity.x < 0)
-				line_2d.points = PackedVector2Array([])
+			elif is_on_floor() or is_on_ceiling() or is_on_wall():
+				if(is_on_floor() or is_on_ceiling()):
+					velocity.y=0
+				elif(is_on_wall()):
+					velocity.x=0
+				stop_grapple()
 				move_and_slide()
 			else:
 				var direction: = Input.get_axis("Left", "Right")
-				if (not is_on_floor()):
-					velocity -= Vector2((pow(velocity.length() * delta, 2)) / position.distance_to(center), 0).rotated(center.angle_to_point(position)) / delta
-					if direction and swingingmovement:
-						velocity += Vector2(SPEED * delta * 0.5, 0).rotated(center.angle_to_point(position)-PI/2*direction)
-				else:
-					if(direction):
-						velocity.x = direction * SPEED
-						animated_sprite_2d.flip_h = direction == -1
-						play_anim("run")
-					else:
-						velocity.x = move_toward(velocity.x, 0, SPEED)
-						play_anim("idle")
+				velocity -= Vector2((pow(velocity.length() * delta, 2)) / position.distance_to(center), 0).rotated(center.angle_to_point(position)) / delta
+				if direction and swingingmovement:
+					velocity += Vector2(SPEED * delta * 0.5, 0).rotated(center.angle_to_point(position)-PI/2*direction)
 				var directionv: = Input.get_axis("Down", "Up")
 				if directionv and swingingmovement:
 					if ( not (directionv == 1 and position.distance_to(center) <= 10 + delta*30) and not ((directionv == -1 and position.distance_to(center) > stringlength + 30 * delta - 1))):
@@ -162,14 +173,9 @@ func _physics_process(delta: float) -> void:
 				if ( not is_on_floor()):
 					gravity(center,delta / 2)
 				move_and_slide()
-				if(not is_on_floor()):
-					position=center+Vector2(length,0).rotated(center.angle_to_point(position))
-					player.rotation = center.angle_to_point(position) - PI / 2
-					animated_sprite_2d.flip_h = (velocity.x < 0) == (position.y > center.y)
-				else:
-					length=position.distance_to(center)
-					player.rotation = 0
-					animated_sprite_2d.flip_h = (velocity.x < 0)
+				position=center+Vector2(length,0).rotated(center.angle_to_point(position))
+				animated_sprite_2d.rotation = center.angle_to_point(position) - PI / 2
+				animated_sprite_2d.flip_h = (velocity.x < 0) == (position.y > center.y)
 				if not is_on_floor():
 					gravity(center,delta / 2)
 				if (swinging):
@@ -203,18 +209,27 @@ func start_grapple(search_point):
 			velocity = Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
 		else:
 			velocity = - Vector2(velocity.length(), 0).rotated(center.angle_to_point(position) + PI / 2)
-func hurt():
+func stop_grapple():
+				swinging = false
+				animated_sprite_2d.rotation = 0
+				animated_sprite_2d.flip_h = (velocity.x < 0)
+				line_2d.points = PackedVector2Array([])
+func hurt(sources):
 	if(not hurting):
 		health-=1
+		health_icons.get_child(health).visible=false
 		if(health>0):
+			if(sources.find("Water")!=-1):
+				position=lastgroundpos
+				velocity*=0
 			play_anim("hurt")
 			hurting=true
-			timer.start()
+			hurttimer.start()
 		else:
 			die()
-func _on_timer_timeout() -> void:
+func _on_hurttimer_timeout() -> void:
 	hurting=false
-	play_anim("default")
+	play_anim("idle")
 func die():
 	dead = true
 	if is_on_floor():
@@ -222,7 +237,7 @@ func die():
 	else:
 		play_anim("death2")
 	swinging = false
-	player.rotation = 0
+	animated_sprite_2d.rotation = 0
 	line_2d.points = PackedVector2Array([])
 	Engine.time_scale=0.5
 	death_timer.start()
@@ -232,3 +247,7 @@ func _on_death_timeout() -> void:
 	Engine.time_scale=1
 func triumph():
 	print("Victory...has been obtained.")
+func _on_position_timer_timeout() -> void:
+	if(is_touching()):
+		lastgroundpos=position
+		lastside=side

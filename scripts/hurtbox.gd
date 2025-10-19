@@ -9,6 +9,6 @@ func _on_body_exited(body: Node2D) -> void:
 func _physics_process(_delta: float) -> void:
 	for hurtee in hurting:
 		if(not hurtee.dead):
-			hurtee.hurt()
+			hurtee.hurt(get_meta("Sources"))
 		else:
 			hurting.remove_at(hurting.find(hurtee))
