@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://coe2s52dflbsp"
+path="res://.godot/imported/I stand and face it(10_23_2025).wav-604a57d0ba201ed888ff72b1edca357f.sample"
+
+[deps]
+
+source_file="res://assets/brackeys_platformer_assets/music/I stand and face it(10_23_2025).wav"
+dest_files=["res://.godot/imported/I stand and face it(10_23_2025).wav-604a57d0ba201ed888ff72b1edca357f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

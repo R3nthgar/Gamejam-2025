@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://c8ubvb2a4p1yc"]
+[gd_scene load_steps=15 format=4 uid="uid://c8ubvb2a4p1yc"]
 
 [ext_resource type="Script" uid="uid://b2swnk6vqcsss" path="res://scripts/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="PackedScene" uid="uid://krfmoauu2bnw" path="res://scenes/player.tscn" id="1_uwrxv"]
@@ -9,6 +9,7 @@
 [ext_resource type="FontFile" uid="uid://dm6d4x56a0sv3" path="res://assets/brackeys_platformer_assets/fonts/PixelOperator8-Bold.ttf" id="6_7nr52"]
 [ext_resource type="PackedScene" uid="uid://ylahwup7tdb4" path="res://scenes/grapple_point.tscn" id="7_wobke"]
 [ext_resource type="PackedScene" uid="uid://dkrut8du02fcw" path="res://victory_zone.tscn" id="8_gee14"]
+[ext_resource type="Script" uid="uid://ctmvjc0gok5dy" path="res://scripts/area_2d.gd" id="10_vtaks"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_gee14"]
 distance = -1.0
@@ -17,6 +18,8 @@ distance = -1.0
 size = Vector2(80, 17)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_0tnpc"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_vtaks"]
 
 [node name="Game" type="Node2D"]
 
@@ -159,3 +162,17 @@ metadata/Sources = ["Water"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox2"]
 shape = SubResource("WorldBoundaryShape2D_0tnpc")
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(18, -62)
+collision_layer = 0
+collision_mask = 32
+script = ExtResource("10_vtaks")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(75, -918)
+rotation = 3.1415927
+shape = SubResource("WorldBoundaryShape2D_vtaks")
+
+[connection signal="body_entered" from="Area2D" to="Player" method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="Area2D" to="Area2D" method="_on_body_entered"]
