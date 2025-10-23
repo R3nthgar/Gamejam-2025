@@ -144,7 +144,7 @@ position = Vector2(427, 1092)
 
 [node name="VictoryZone" parent="." instance=ExtResource("8_gee14")]
 unique_name_in_owner = true
-position = Vector2(697, 43)
+position = Vector2(112, -1632)
 
 [node name="Hurtbox2" parent="." instance=ExtResource("5_arpf6")]
 metadata/Sources = ["Water"]

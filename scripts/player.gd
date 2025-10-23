@@ -147,7 +147,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			if Input.is_action_just_pressed("Jump"):
 				stop_grapple()
-				velocity.y += JUMP_VELOCITY/2
+				velocity.y = min(velocity.y,JUMP_VELOCITY)
 				play_anim("roll")
 				launched = true
 				move_and_slide()

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dw42ld0wtu3mt" path="res://victory_zone.gd" id="1_l2p5h"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3xw4k"]
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_l2p5h"]
 
 [node name="VictoryZone" type="Area2D"]
 collision_layer = 0
@@ -10,6 +10,7 @@ collision_mask = 32
 script = ExtResource("1_l2p5h")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_3xw4k")
+rotation = 3.1415927
+shape = SubResource("WorldBoundaryShape2D_l2p5h")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
