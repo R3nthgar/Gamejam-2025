@@ -19,6 +19,7 @@ extends CharacterBody2D
 @onready var backwardsdown: RayCast2D = $Backwardsdown
 @onready var backwardsup: RayCast2D = $Backwardsup
 @onready var health_icons: Node2D = %HealthIcons
+@onready var tile_map_layer_2: TileMapLayer = $"../Parallax2D/TileMapLayer2"
 
 const maxspeed = 200.0
 @onready var victory_zone: Area2D = %VictoryZone
@@ -247,6 +248,7 @@ func _on_death_timeout() -> void:
 	Engine.time_scale=1
 func triumph():
 	print("Victory...has been obtained.")
+	tile_map_layer_2.visible=false
 func _on_position_timer_timeout() -> void:
 	if(is_touching()):
 		lastgroundpos=position
