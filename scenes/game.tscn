@@ -153,7 +153,7 @@ position = Vector2(427, 1092)
 
 [node name="VictoryZone" parent="." instance=ExtResource("8_gee14")]
 unique_name_in_owner = true
-position = Vector2(112, -2432)
+position = Vector2(111, -1792)
 
 [node name="Hurtbox2" parent="." instance=ExtResource("5_arpf6")]
 position = Vector2(112, 80)
