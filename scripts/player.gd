@@ -134,8 +134,8 @@ func _physics_process(delta: float) -> void:
 						velocity.x = move_toward(velocity.x, 0,SPEED*delta*20)
 					else:
 						velocity.y = move_toward(velocity.y, 0,SPEED*delta*20)
-			elif inair and direction and not stopped and (velocity.x>-SPEED/2 if direction==-1 else velocity.x<SPEED/2):
-				velocity.x=move_toward(velocity.x, SPEED*direction/2,SPEED*delta*5)
+			elif inair and direction and not stopped and (velocity.x>-SPEED if direction==-1 else velocity.x<SPEED):
+				velocity.x=move_toward(velocity.x, SPEED*direction,SPEED*delta*5)
 				animated_sprite_2d.flip_h = direction == -1
 			if Input.is_action_just_pressed("Jump"):
 				if(is_touching()):
@@ -152,7 +152,7 @@ func _physics_process(delta: float) -> void:
 				play_anim("roll")
 				launched = true
 				move_and_slide()
-			elif is_on_floor() or is_on_ceiling() or is_on_wall():
+			elif is_on_floor() or is_on_ceiling() or is_on_wall() or is_touching():
 				if(is_on_floor() or is_on_ceiling()):
 					velocity.y=0
 				elif(is_on_wall()):

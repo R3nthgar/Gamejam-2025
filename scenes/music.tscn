@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://blqm8er3yvd2g"]
+[gd_scene load_steps=3 format=3 uid="uid://bs38yaw6ht1j"]
 
 [ext_resource type="AudioStream" uid="uid://coe2s52dflbsp" path="res://assets/brackeys_platformer_assets/music/I stand and face it(10_23_2025).wav" id="1_ibx2e"]
 [ext_resource type="Script" uid="uid://dlq0owsqhili7" path="res://scripts/music.gd" id="2_ibx2e"]
 
-[node name="Music" type="AudioStreamPlayer2D"]
+[node name="Music" type="AudioStreamPlayer"]
 stream = ExtResource("1_ibx2e")
 autoplay = true
 script = ExtResource("2_ibx2e")
