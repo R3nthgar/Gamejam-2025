@@ -9,8 +9,8 @@
 [ext_resource type="FontFile" uid="uid://dm6d4x56a0sv3" path="res://assets/brackeys_platformer_assets/fonts/PixelOperator8-Bold.ttf" id="6_7nr52"]
 [ext_resource type="PackedScene" uid="uid://ylahwup7tdb4" path="res://scenes/grapple_point.tscn" id="7_wobke"]
 [ext_resource type="PackedScene" uid="uid://dkrut8du02fcw" path="res://victory_zone.tscn" id="8_gee14"]
-[ext_resource type="Script" uid="uid://ctmvjc0gok5dy" path="res://scripts/musictrigger.gd" id="10_vtaks"]
-[ext_resource type="Script" uid="uid://cdf3s733auu0x" path="res://scripts/move_to_top.gd" id="11_kvpfn"]
+[ext_resource type="Script" path="res://scripts/area_2d.gd" id="10_vtaks"]
+[ext_resource type="Script" path="res://scripts/move_to_top.gd" id="11_kvpfn"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_gee14"]
 distance = -1.0
@@ -190,5 +190,7 @@ polygon = PackedVector2Array(-1, 191, -513, 191, -513, 15, -497, 15, -497, -17, 
 position = Vector2(-175, -1487)
 polygon = PackedVector2Array(-1, 191, -513, 191, -513, 15, -497, 15, -497, -17, -481, -17, -481, -33, -465, -33, -465, -49, -433, -49, -433, -65, -385, -65, -385, -81, -321, -81, -321, -97, -225, -97, -225, -113, -33, -113, -33, -129, 607, -129, 607, -113, 799, -113, 799, -97, 895, -97, 895, -81, 959, -81, 959, -65, 1007, -65, 1007, -49, 1039, -49, 1039, -33, 1055, -33, 1055, -17, 1071, -17, 1071, 15, 1087, 15, 1087, 191, 575, 191, 575, -1, 0, -1)
 one_way_collision = true
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
 
 [connection signal="body_entered" from="MusicTrigger" to="MusicTrigger" method="_on_body_entered"]
