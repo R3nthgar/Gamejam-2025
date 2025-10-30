@@ -20,9 +20,13 @@ extends CharacterBody2D
 @onready var backwardsup: RayCast2D = $Backwardsup
 @onready var health_icons: Node2D = %HealthIcons
 @onready var tile_map_layer_2: TileMapLayer = $"../Parallax2D/TileMapLayer2"
-
-const maxspeed = 200.0
 @onready var victory_zone: Area2D = %VictoryZone
+@onready var win_timer: Timer = $WinTimer
+@onready var canvas_layer: CanvasLayer = $"../CanvasLayer"
+var credits = preload("res://scenes/credits.tscn")
+
+var background_transparency = -1
+const maxspeed = 200.0
 const SPEED = 180.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 110
@@ -64,6 +68,9 @@ func gravity(center: Vector2, delta):
 func is_touching():
 	return forwards.is_colliding() or downwards.is_colliding() or upwards.is_colliding() or backwards.is_colliding()
 func _physics_process(delta: float) -> void:
+	if(background_transparency>=0):
+		tile_map_layer_2.modulate=Color(1,1,1,background_transparency)
+		background_transparency-=delta
 	if not (dead):
 		grapple_icon.position=near_grapple(player.position).position
 		if Input.is_action_just_pressed("Grapple"):
@@ -248,8 +255,12 @@ func _on_death_timeout() -> void:
 	Engine.time_scale=1
 func triumph():
 	print("Victory...has been obtained.")
-	tile_map_layer_2.visible=false
+	background_transparency=1
+	win_timer.start()
+	death.text="You Won"
 func _on_position_timer_timeout() -> void:
 	if(is_touching()):
 		lastgroundpos=position
 		lastside=side
+func _on_win_timer_timeout() -> void:
+	canvas_layer.add_child(credits.instantiate())

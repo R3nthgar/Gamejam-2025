@@ -336,6 +336,11 @@ collision_mask = 4
 [node name="PositionTimer" type="Timer" parent="."]
 autostart = true
 
+[node name="WinTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [connection signal="timeout" from="HurtTimer" to="." method="_on_hurttimer_timeout"]
 [connection signal="timeout" from="DeathTimer" to="." method="_on_death_timeout"]
 [connection signal="timeout" from="PositionTimer" to="." method="_on_position_timer_timeout"]
+[connection signal="timeout" from="WinTimer" to="." method="_on_win_timer_timeout"]
