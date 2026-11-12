@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://krfmoauu2bnw"]
+[gd_scene format=3 uid="uid://krfmoauu2bnw"]
 
 [ext_resource type="Script" uid="uid://da6j4ue8crl2u" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://bar17mc4trefd" path="res://assets/brackeys_platformer_assets/sprites/knight.png" id="1_lj8jo"]
@@ -142,7 +142,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gl8cc")
 }],
-"loop": false,
+"loop": 0,
 "name": &"death1",
 "speed": 10.0
 }, {
@@ -153,7 +153,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dt7fs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"death2",
 "speed": 5.0
 }, {
@@ -170,7 +170,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5esyv")
 }],
-"loop": true,
+"loop": 1,
 "name": &"hurt",
 "speed": 5.0
 }, {
@@ -187,7 +187,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ws0vm")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 10.0
 }, {
@@ -195,7 +195,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g2els")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump",
 "speed": 10.0
 }, {
@@ -212,7 +212,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_l71n6")
 }],
-"loop": true,
+"loop": 1,
 "name": &"roll",
 "speed": 7.5
 }, {
@@ -265,7 +265,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fulsm")
 }],
-"loop": true,
+"loop": 1,
 "name": &"run",
 "speed": 10.0
 }]
@@ -273,70 +273,71 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_g2els"]
 radius = 8.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=1066568051]
 collision_layer = 49
 script = ExtResource("1_g2els")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1179646692]
 sprite_frames = SubResource("SpriteFrames_rhr3r")
 animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.43941072
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=515763152]
 shape = SubResource("CircleShape2D_g2els")
 
-[node name="HurtTimer" type="Timer" parent="."]
+[node name="HurtTimer" type="Timer" parent="." unique_id=709920585]
 wait_time = 0.8
 one_shot = true
 
-[node name="DeathTimer" type="Timer" parent="."]
+[node name="DeathTimer" type="Timer" parent="." unique_id=736809339]
 wait_time = 0.6
 one_shot = true
 
-[node name="Forwards" type="RayCast2D" parent="."]
+[node name="Forwards" type="RayCast2D" parent="." unique_id=269031275]
 target_position = Vector2(9, 0)
 collision_mask = 4
 
-[node name="Upwards" type="RayCast2D" parent="."]
+[node name="Upwards" type="RayCast2D" parent="." unique_id=1765821413]
 target_position = Vector2(0, -9)
 collision_mask = 4
 
-[node name="Downwards" type="RayCast2D" parent="."]
+[node name="Downwards" type="RayCast2D" parent="." unique_id=200590374]
 target_position = Vector2(0, 9)
 collision_mask = 6
 
-[node name="Backwards" type="RayCast2D" parent="."]
+[node name="Backwards" type="RayCast2D" parent="." unique_id=1605815189]
 target_position = Vector2(-9, 0)
 collision_mask = 4
 
-[node name="Forwardsdown" type="RayCast2D" parent="."]
+[node name="Forwardsdown" type="RayCast2D" parent="." unique_id=615562679]
 rotation = 0.7853982
 scale = Vector2(1.1, 1.1)
 target_position = Vector2(11.570838, 0)
 collision_mask = 4
 
-[node name="Forwardsup" type="RayCast2D" parent="."]
+[node name="Forwardsup" type="RayCast2D" parent="." unique_id=1826817276]
 rotation = 0.7853982
 scale = Vector2(1.1, 1.1)
 target_position = Vector2(0, -11.570838)
 collision_mask = 4
 
-[node name="Backwardsdown" type="RayCast2D" parent="."]
+[node name="Backwardsdown" type="RayCast2D" parent="." unique_id=1547365440]
 rotation = 0.7853982
 scale = Vector2(1.1, 1.1)
 target_position = Vector2(0, 11.570838)
 collision_mask = 4
 
-[node name="Backwardsup" type="RayCast2D" parent="."]
+[node name="Backwardsup" type="RayCast2D" parent="." unique_id=635307649]
 rotation = 0.7853982
 scale = Vector2(1.1, 1.1)
 target_position = Vector2(-11.570838, 0)
 collision_mask = 4
 
-[node name="PositionTimer" type="Timer" parent="."]
+[node name="PositionTimer" type="Timer" parent="." unique_id=608335041]
 autostart = true
 
-[node name="WinTimer" type="Timer" parent="."]
+[node name="WinTimer" type="Timer" parent="." unique_id=885217908]
 wait_time = 2.0
 one_shot = true
 

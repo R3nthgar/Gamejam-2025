@@ -1,11 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://ylahwup7tdb4"]
+[gd_scene format=3 uid="uid://ylahwup7tdb4"]
 
-[ext_resource type="Texture2D" uid="uid://bokqt7alsxf0o" path="res://assets/brackeys_platformer_assets/sprites/world_tileset.png" id="1_gaaoi"]
+[ext_resource type="Texture2D" uid="uid://bvrnajp7yu1h6" path="res://assets/gamejam_tileset_collectibles.png" id="1_gaaoi"]
 
-[node name="Grapple Point" type="Node2D"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_gaaoi"]
+atlas = ExtResource("1_gaaoi")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -3)
-texture = ExtResource("1_gaaoi")
-region_enabled = true
+[sub_resource type="AtlasTexture" id="AtlasTexture_o5pw1"]
+atlas = SubResource("AtlasTexture_gaaoi")
+region = Rect2(16, 16, 16, 16)
+
+[node name="Grapple Point" type="Node2D" unique_id=1872016379]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=327099433]
+modulate = Color(1, 0.78431374, 0, 1)
+position = Vector2(1.25, -3.75)
+scale = Vector2(2.5, 2.5)
+texture = SubResource("AtlasTexture_o5pw1")
 region_rect = Rect2(80, 112, 16, 16)
