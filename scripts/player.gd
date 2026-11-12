@@ -31,7 +31,7 @@ const SPEED = 180.0
 const JUMP_VELOCITY = -300.0
 var stringlength = 110
 var side = 0
-var health = 3
+var health = 1
 var hurting=false
 var swinging = false
 var truecenter
@@ -44,12 +44,14 @@ var stopped=false
 var inair = false
 var lastgroundpos = position
 var lastside
+var sprite_offset=3
 func play_anim(anim):
 	if(not hurting):
 		animated_sprite_2d.play(anim)
 func changeside(newside):
 	animated_sprite_2d.rotation=PI/2*(newside%2)
 	animated_sprite_2d.flip_v=newside-1>0
+	animated_sprite_2d.offset=Vector2(0,-sprite_offset if (newside==0 or newside==1) else sprite_offset if (newside==2 or newside==3) else 0)
 	side=newside
 func jump():
 	if(side==0):
@@ -155,7 +157,6 @@ func _physics_process(delta: float) -> void:
 		else:
 			if Input.is_action_just_pressed("Jump"):
 				stop_grapple()
-				velocity.y = velocity.y + JUMP_VELOCITY
 				play_anim("roll")
 				launched = true
 				move_and_slide()
