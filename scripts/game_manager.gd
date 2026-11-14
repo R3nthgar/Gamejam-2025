@@ -12,3 +12,7 @@ func _process(delta: float) -> void:
 func add_point():
 	coins+=1
 	coinLabel.text="Coins: "+str(coins)
+
+
+func _on_body_entered(body: Node2D) -> void:
+	Music.trackchange(1)

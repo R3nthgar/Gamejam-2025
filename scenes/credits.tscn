@@ -1,78 +1,9 @@
 [gd_scene format=3 uid="uid://coex2qkedaf1d"]
 
 [ext_resource type="FontFile" uid="uid://dm6d4x56a0sv3" path="res://assets/brackeys_platformer_assets/fonts/PixelOperator8-Bold.ttf" id="1_0bpdh"]
-[ext_resource type="Script" uid="uid://uyemwakrr1sv" path="res://scripts/credits.gd" id="1_2ckv8"]
 [ext_resource type="FontFile" uid="uid://b7ekj2klpwkt8" path="res://assets/brackeys_platformer_assets/fonts/PixelOperator8.ttf" id="3_0ctdu"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_0bpdh"]
-
-[sub_resource type="Animation" id="Animation_0bpdh"]
-length = 4.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("RichTextLabel:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-576, -324)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("RichTextLabel2:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-576, -972)]
-}
-
-[sub_resource type="Animation" id="Animation_yeqti"]
-resource_name = "new_animation"
-length = 4.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("RichTextLabel:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 4),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(0, 648)]
-}
-
-[sub_resource type="Animation" id="Animation_2ckv8"]
-resource_name = "new_animation_2"
-length = 4.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("RichTextLabel2:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 4),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, -648), Vector2(0, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_0bpdh"]
-_data = {
-&"RESET": SubResource("Animation_0bpdh"),
-&"new_animation": SubResource("Animation_yeqti"),
-&"new_animation_2": SubResource("Animation_2ckv8")
-}
 
 [sub_resource type="Animation" id="Animation_2fbfq"]
 length = 0.001
@@ -113,37 +44,11 @@ _data = {
 
 [node name="Credits" type="Node2D" unique_id=90171393]
 position = Vector2(578, 326)
-script = ExtResource("1_2ckv8")
 
 [node name="MeshInstance2D" type="MeshInstance2D" parent="." unique_id=768038920]
 modulate = Color(0, 0, 0, 1)
 scale = Vector2(-1157.3136, 652.765)
 mesh = SubResource("QuadMesh_0bpdh")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="." unique_id=2029448280]
-visible = false
-offset_left = -576.0
-offset_top = -324.0
-offset_right = 576.0
-theme_override_colors/default_color = Color(1, 1, 1, 1)
-theme_override_fonts/normal_font = ExtResource("1_0bpdh")
-theme_override_fonts/bold_font = ExtResource("1_0bpdh")
-theme_override_font_sizes/normal_font_size = 32
-theme_override_font_sizes/bold_font_size = 32
-text = "Tree Knight Who Was Supposed To Be A Spider But Wasn't Because Of Time Constraints And Also Communication
-
-Credits
-
-
-Sinxanity (Anaya Dranahan): Music
-
-James S. & Oliver Spaly: Programming"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RichTextLabel" unique_id=1930821327]
-root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_0bpdh")
 
 [node name="RichTextLabel3" type="RichTextLabel" parent="." unique_id=233195628]
 clip_contents = false
@@ -152,10 +57,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -576.0
-offset_top = -328.0
-offset_right = 576.0
-offset_bottom = 322.0
+offset_left = -578.0
+offset_top = -326.0
+offset_right = 574.0
+offset_bottom = 324.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/default_color = Color(1, 1, 1, 1)
@@ -166,48 +71,24 @@ theme_override_font_sizes/normal_font_size = 32
 theme_override_font_sizes/bold_font_size = 48
 theme_override_font_sizes/italics_font_size = 40
 bbcode_enabled = true
-text = "[b]Itsy Bitsy Knight[/b]
+text = "[b]The Ascendant Arachnid[/b]
 
 
 
 [i]Credits[/i]:
 
-Sinxanity (Anaya Dranahan): Music
+Sinxanity (Anaya D): Music
 
 
-James S. and Oliver Spaly: Programming and Level Design
+James S and Oliver S: Programming and Level Design
 
 
-Lorelai D. and Brackeys' Platformer Assets:
+Lorelai D:
+ Platformer Assets:
 Artwork
 "
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="RichTextLabel2" type="RichTextLabel" parent="." unique_id=1888635904]
-visible = false
-offset_left = -576.0
-offset_top = -972.0
-offset_right = 576.0
-offset_bottom = -648.0
-theme_override_fonts/normal_font = ExtResource("1_0bpdh")
-theme_override_fonts/bold_font = ExtResource("1_0bpdh")
-theme_override_font_sizes/normal_font_size = 32
-theme_override_font_sizes/bold_font_size = 32
-text = "Tree Knight Who Was Supposed To Be A Spider But Wasn't Because Of Time Constraints And Also Communication
-
-Credits
-
-
-Sinxanity (Anaya Dranahan): Music
-
-James S. & Oliver Spaly: Programming"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RichTextLabel2" unique_id=28528328]
-root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_0bpdh")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=744761189]
 libraries/ = SubResource("AnimationLibrary_2fbfq")
@@ -217,7 +98,5 @@ autoplay = &"new_animation_3"
 wait_time = 2.0
 one_shot = true
 autostart = true
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=604574560]
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
